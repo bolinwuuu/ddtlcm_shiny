@@ -45,6 +45,11 @@ ui = fluidPage(
           text-transform: uppercase;
           margin-bottom: 5px;
         }
+        
+        td {
+        padding: 3px; /* Adjust the padding to control spacing within cells */
+        margin: 5px; /* Adjust the margin to control spacing around cells */
+        }
       "))
   ),
   

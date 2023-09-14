@@ -859,31 +859,7 @@ server = function(input, output, session) {
   #   }
   # )
   
-  output$sim_instr <- renderUI({
-    wellPanel(
-      h4("Instructions:"),
-      p("Shortcut: select 'Exemplar Parameters' and switch to 'Parameters' and 'Data' tabs to view and download file templates!"),
-      p("The following 4 files should be prepared:"),
-      h5("Tree phylo"),
-      p("Prepare a csv or txt file containing a tree in Newick format (parenthetic format). An example of a txt file:"),
-      p("(((v5:0.14,(v4:0.12,v2:0.12)u6:0.016)u5:0.051,(v6:0.19,(v3:0.16,v1:0.16)u2:0.024)u3:0.0051)u4:0.81)u1;"),
-      h5("Class Probability List"),
-      p("Prepare a csv file "),
-    )
-  })
   
-  output$an_instr <- renderText({
-    if (input$mode == "Simulate Data") {
-      
-      txt <- "analysis instructions in simulation mode!\ntest newline"
-      return(txt)
-    } else if (input$mode == "Upload Raw Data") {
-      return("analysis instructions in raw data mode!")
-    } else {
-      return("analysis instructions in posterior sample mode!")
-    }
-    
-  })
   
   output$response_matrix_csv <- renderDataTable({
     get_response_matrix()
@@ -1017,4 +993,86 @@ server = function(input, output, session) {
     }
   )
   
+  item_memb_example_str <- function() {
+    iml <- data_hchs$item_membership_list
+    
+    rows_str <- paste(lapply(iml, function(lst) paste("<tr><td>", 
+                                                  paste(lst, collapse = "</td><td>"), 
+                                                  "</td></tr>")), collapse = '')
+    return(paste("<table>", rows_str, "</table>"))
+    
+  }
+  
+  item_name_example_str <- function() {
+    inl <- data_hchs$item_name_list
+    
+    max_length <- max(sapply(inl, length))
+    
+    inl_padded <- lapply(inl, function(lst) {
+      length_diff <- max_length - length(lst)
+      c(lst, rep("&nbsp;", length_diff))
+    })
+    
+    inl_transposed <- transpose(as.matrix(inl_padded))
+    
+    inl_strings <- lapply(inl_transposed, function(row) {
+      paste("<tr><td>", paste(row, collapse = "</td><td>"), "</td></tr>")
+    })
+    
+    content <- paste(inl_strings, collapse = "")
+    headers <- paste("<tr><td>", paste(names(inl), collapse = "</td><td>"), "</td></tr>")
+    
+    return(paste("<table>", headers, content, "</table>"))
+  }
+  
+  output$sim_instr <- renderUI({
+    wellPanel(
+      h4("Instructions:"),
+      p("Shortcut: select 'Exemplar Parameters' and switch to 'Parameters' and 'Data' tabs to view and download file templates!"),
+      p("The following 4 files should be prepared:"),
+      h5("Tree phylo"),
+      p("Prepare a csv or txt file containing a MAP tree in Newick format (parenthetic format)."),
+      p("An example of a txt file:"),
+      p("(((v5:0.14,(v4:0.12,v2:0.12)u6:0.016)u5:0.051,(v6:0.19,(v3:0.16,v1:0.16)u2:0.024)u3:0.0051)u4:0.81)u1;"),
+      h5("Class Probability List"),
+      p("Prepare a csv file containing a single column data with length K, where K is the number of classes. 
+        The k-th entry represents the posterior mean probabilities of a class k. Notice that the sum of values in all entries should be equal to 1."),
+      p("An example of a csv file with header:"),
+      p(HTML(paste("x<br>", paste(round(data_hchs$class_probability, 3), collapse = '<br>')))),
+      h5("Sigma by Group List"),
+      p("Prepare a csv file containing a single column data with length G, where G is the number of item groups.
+        The g-th entry represents the posterior mean diffusion variances of a group g."),
+      p("An example of a csv file with header:"),
+      p(HTML(paste("x<br>", paste(round(data_hchs$Sigma_by_group, 3), collapse = '<br>')))),
+      h5("Item Membership List"),
+      p("Prepare a csv file containing G rows, where G is the number of item groups.
+        The g-th row should contain the column indices of the observed data matrix corresponding to items in group g."),
+      p("An example of a csv file with no header:"),
+      # p(HTML(paste(lapply(data_hchs$item_membership_list, function(lst) paste(lst, collapse = " ")), collapse = '<br>'))),
+      p(HTML(item_memb_example_str())),
+      h5("Optional: Item Name List"),
+      p("If Item Name List is not provided, a default list will be used to name the groups and items."),
+      p("To upload Item Name List, prepare a csv file containing G columns, where G is the number of item groups.
+        The name of the g-th column represents the name of the g-th group. The elements in the g-th column should contain the names of items in group g."),
+      p("Notice that the item names in the g-th column should be in the same order as their corresponding column indices of data matrix are listed in the g-th row in Item Membership List."),
+      p("An example of a csv file:"),
+      # print("Dairy Fat Fruit Grain Meat Sugar Vegetable"),
+      # sprintf("dairy_%d fat_%d fruit_%d grain_%d meat_%d sugar_%d vegetable_%d", 3),
+      # sprintf("dairy_%1$d fat_%1$d fruit_%1$d grain_%1$d meat_%1$d sugar_%1$d vegetable_%1$d", 3),
+      p(HTML(item_name_example_str()))
+    )
+  })
+  
+  output$an_instr <- renderText({
+    if (input$mode == "Simulate Data") {
+      
+      txt <- "analysis instructions in simulation mode!\ntest newline"
+      return(txt)
+    } else if (input$mode == "Upload Raw Data") {
+      return("analysis instructions in raw data mode!")
+    } else {
+      return("analysis instructions in posterior sample mode!")
+    }
+    
+  })
 }

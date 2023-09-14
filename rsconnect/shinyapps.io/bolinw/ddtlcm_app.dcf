@@ -5,6 +5,6 @@ account: bolinw
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 9774145
-bundleId: 7654162
+bundleId: 7658344
 url: https://bolinw.shinyapps.io/ddtlcm_app/
 version: 1
