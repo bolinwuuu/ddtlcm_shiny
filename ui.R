@@ -77,7 +77,7 @@ ui = fluidPage(
                                             fluidRow(
                                               column(width = 11,
                                                      radioButtons("dataset_name", "Scenario",
-                                                                  choices = c("Mimicing HCHS", "Synthetic Data"),
+                                                                  choices = c("Mimicking HCHS", "Synthetic Data"),
                                                      ),
                                               )
                                               
@@ -135,20 +135,11 @@ ui = fluidPage(
                            column(width = 8,
                                   fileInput("item_membership_file", "Upload the item membership list")
                            ),
-                           column(width = 1,
-                                  div(style = "width: 100%; height: 20px;"),
-                                  checkboxInput("item_membership_header", "Header", FALSE)
-                           ),
+                           # column(width = 1,
+                           #        div(style = "width: 100%; height: 20px;"),
+                           #        checkboxInput("item_membership_header", "Header", FALSE)
+                           # ),
                          ),
-                         # fluidRow(
-                         #   column(width = 8,
-                         #          fileInput("item_name_file", "Optional: Upload the item name list")
-                         #   ),
-                         #   column(width = 1,
-                         #          div(style = "width: 100%; height: 20px;"),
-                         #          checkboxInput("item_name_header", "Header", TRUE)
-                         #   ),
-                         # ),
         ),
         conditionalPanel("input.mode == 'Upload Posterior Samples'",
                          div(class = "option-header", "Upload Data"),
@@ -166,10 +157,10 @@ ui = fluidPage(
                                             column(width = 8,
                                                    fileInput("item_name_file", "")
                                             ),
-                                            column(width = 1,
-                                                   div(style = "width: 100%; height: 20px;"),
-                                                   checkboxInput("item_name_header", "Header", TRUE)
-                                            ),
+                                            # column(width = 1,
+                                            #        div(style = "width: 100%; height: 20px;"),
+                                            #        checkboxInput("item_name_header", "Header", TRUE)
+                                            # ),
                                           ),
                          ),
                          # actionButton("read_button", "Read in"),
@@ -222,8 +213,8 @@ ui = fluidPage(
     
     mainPanel(
       tabsetPanel(
-        tabPanel("Simulation",
-                 h3("Simulated Tree & Response Probabilities"),
+        tabPanel("Truth",
+                 h3("True Parameters: Tree & Response Probabilities"),
                  conditionalPanel("input.mode == 'Simulate Data' & input.sim_data_src == 'Upload Parameters'",
                                   checkboxInput("sim_instr_checkbox", "Show instructions", TRUE),
                                   conditionalPanel("input.sim_instr_checkbox == 1",
@@ -242,21 +233,21 @@ ui = fluidPage(
                           )
                    ),
                  ),
-                 fluidRow(
-                   div(style = "height: 30px;"),
-                   fluidRow(
-                     column(width = 12,
-                            downloadButton("download_sim_data", "Download Simulated Data"),
-                            ),
-                   ),
-                 ),
+                 # fluidRow(
+                 #   div(style = "height: 30px;"),
+                 #   fluidRow(
+                 #     column(width = 12,
+                 #            downloadButton("download_sim_data", "Download Simulated Data"),
+                 #            ),
+                 #   ),
+                 # ),
         ),
         tabPanel("Analysis",
-                 h3("Tree & Response Probabilities of Analysis Result"),
+                 h3("Analysis Result: Tree & Response Probabilities"),
                  conditionalPanel("input.mode != 'Simulate Data' | input.sim_data_src != 'Exemplar Parameters'",
                                   checkboxInput("an_instr_checkbox", "Show instructions", TRUE),
                                   conditionalPanel("input.an_instr_checkbox == 1",
-                                                   verbatimTextOutput("an_instr"),
+                                                   uiOutput("an_instr"),
                                   ),
                  ),
                  
@@ -273,7 +264,7 @@ ui = fluidPage(
                    ),
                  ),
                  conditionalPanel("input.mode != 'Upload Posterior Samples'",
-                                  div(style = "height: 250px;"),
+                                  div(style = "height: 200px;"),
                                   fluidRow(
                                     downloadButton("download_posterior", "Download Posterior Samples"),
                                   ),
@@ -372,13 +363,13 @@ ui = fluidPage(
                                     ),
                                   ),
                  ),
-                 fluidRow(
-                   div(class = "option-header", "Posterior Samples"),
-                   column(width = 3,
-                          downloadButton("download_posterior_datatab", "Download RData"),
-                   ),
-                   
-                 ),
+                 # fluidRow(
+                 #   div(class = "option-header", "Posterior Samples"),
+                 #   column(width = 3,
+                 #          downloadButton("download_posterior_datatab", "Download RData"),
+                 #   ),
+                 #   
+                 # ),
                  
         ),
       ),

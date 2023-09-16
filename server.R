@@ -28,9 +28,9 @@ server = function(input, output, session) {
   
   observeEvent(input$mode, {
     if (input$mode == "Simulate Data") {
-      showTab(inputId = "fluidpage", target = "Simulation")
+      showTab(inputId = "fluidpage", target = "Truth")
     } else {
-      hideTab(inputId = "fluidpage", target = "Simulation")
+      hideTab(inputId = "fluidpage", target = "Truth")
       # showTab(inputId = "fluidpage", target = "Analysis")
     }
   })
@@ -201,7 +201,8 @@ server = function(input, output, session) {
       input$read_button
       
       item_memb_file <- isolate(input$item_membership_file)
-      item_memb_header <- isolate(input$item_membership_header)
+      # item_memb_header <- isolate(input$item_membership_header)
+      item_memb_header <- FALSE
       
       uploaded_data <- read_uploaded_data(item_memb_file,
                                           item_memb_header,
@@ -245,7 +246,8 @@ server = function(input, output, session) {
       
       opt <- isolate(input$item_name_opt)
       item_name_file <- isolate(input$item_name_file)
-      item_name_header <- isolate(input$item_name_header)
+      # item_name_header <- isolate(input$item_name_header)
+      item_name_header <- TRUE
       if (opt == "Upload" & !is.null(item_name_file)) {
         
         item_name <- read_uploaded_data(item_name_file,
@@ -876,14 +878,14 @@ server = function(input, output, session) {
     }
   )
   
-  output$download_sim_data <- downloadHandler(
-    filename = function() {
-      "data_matrix.csv"
-    },
-    content = function(file) {
-      write.csv(get_response_matrix(), file, row.names = FALSE)
-    }
-  )
+  # output$download_sim_data <- downloadHandler(
+  #   filename = function() {
+  #     "data_matrix.csv"
+  #   },
+  #   content = function(file) {
+  #     write.csv(get_response_matrix(), file, row.names = FALSE)
+  #   }
+  # )
   
   output$item_membership_csv <- renderDataTable({
     item_memb <- get_item_membership()
@@ -983,15 +985,15 @@ server = function(input, output, session) {
     }
   )
   
-  output$download_posterior_datatab <- downloadHandler(
-    filename = function() {
-      "posterior_samples.RData"
-    },
-    content = function(file) {
-      res <- get_result()
-      save(res, file = file)
-    }
-  )
+  # output$download_posterior_datatab <- downloadHandler(
+  #   filename = function() {
+  #     "posterior_samples.RData"
+  #   },
+  #   content = function(file) {
+  #     res <- get_result()
+  #     save(res, file = file)
+  #   }
+  # )
   
   item_memb_example_str <- function() {
     iml <- data_hchs$item_membership_list
@@ -1025,10 +1027,34 @@ server = function(input, output, session) {
     return(paste("<table>", headers, content, "</table>"))
   }
   
+  data_matrix_str <- function() {
+    headers <- paste("<tr><td>", paste(paste("x", 1:10, sep = ""), collapse = "</td><td>"), "</td></tr>")
+    set.seed(1)
+    dmat <- matrix(rbinom(5 * 10, 1, 0.5), nrow = 5, ncol = 10)
+    content <- paste("<tr><td>", paste(apply(dmat, 1, paste, collapse = "</td><td>"), collapse = "</td></tr><tr><td>"), "</td></tr>")
+    
+    return(paste("<table>", headers, content, "</table>"))
+  }
+  
   output$sim_instr <- renderUI({
+    sim_par_instr()
+  })
+  
+  output$an_instr <- renderUI({
+    if (input$mode == "Simulate Data") {
+      sim_par_instr()
+    } else if (input$mode == "Upload Raw Data") {
+      raw_data_instr()
+    } else {
+      posterior_instr()
+    }
+    
+  })
+  
+  sim_par_instr <- function() {
     wellPanel(
       h4("Instructions:"),
-      p("Shortcut: select 'Exemplar Parameters' and switch to 'Parameters' and 'Data' tabs to view and download file templates!"),
+      p("Shortcut: select 'Exemplar Parameters' and switch to 'Parameters' tab to view and download file templates!"),
       p("The following 4 files should be prepared:"),
       h5("Tree phylo"),
       p("Prepare a csv or txt file containing a MAP tree in Newick format (parenthetic format)."),
@@ -1047,8 +1073,32 @@ server = function(input, output, session) {
       h5("Item Membership List"),
       p("Prepare a csv file containing G rows, where G is the number of item groups.
         The g-th row should contain the column indices of the observed data matrix corresponding to items in group g."),
+      p("An example of a csv file:"),
+      p(HTML(item_memb_example_str())),
+      h5("Optional: Item Name List"),
+      p("If Item Name List is not provided, a default list will be used to name the groups and items."),
+      p("To upload Item Name List, prepare a csv file containing G columns, where G is the number of item groups.
+        The header of the g-th column represents the name of the g-th group. The elements in the g-th column should contain the names of items in group g."),
+      p("Notice that the item names in the g-th column should be in the same order as their corresponding column indices of data matrix are listed in the g-th row in Item Membership List."),
+      p("An example of a csv file:"),
+      p(HTML(item_name_example_str()))
+    )
+  }
+  
+  raw_data_instr <- function() {
+    wellPanel(
+      h4("Instructions:"),
+      p("Shortcut: select mode 'Simulate Data' and source 'Exemplar Parameters' and switch to 'Parameters' and 'Data' tabs to view and download file templates!"),
+      p("The following 2 files should be prepared:"),
+      h5("Data Matrix"),
+      p("Prepare a csv file containing a N * J binary matrix, where N is the number of individuals and J is the number of food items.
+        The entry at the n-th row, j-th column represents whether the n-th individual was exposed to the j-th item: 1 for exposure and 0 for non-exposure."),
+      p("An example of a csv file with headers, where N = 5 and J = 10:"),
+      p(HTML(data_matrix_str())),
+      h5("Item Membership List"),
+      p("Prepare a csv file containing G rows, where G is the number of item groups.
+        The g-th row should contain the column indices of the observed data matrix corresponding to items in group g."),
       p("An example of a csv file with no header:"),
-      # p(HTML(paste(lapply(data_hchs$item_membership_list, function(lst) paste(lst, collapse = " ")), collapse = '<br>'))),
       p(HTML(item_memb_example_str())),
       h5("Optional: Item Name List"),
       p("If Item Name List is not provided, a default list will be used to name the groups and items."),
@@ -1056,23 +1106,23 @@ server = function(input, output, session) {
         The name of the g-th column represents the name of the g-th group. The elements in the g-th column should contain the names of items in group g."),
       p("Notice that the item names in the g-th column should be in the same order as their corresponding column indices of data matrix are listed in the g-th row in Item Membership List."),
       p("An example of a csv file:"),
-      # print("Dairy Fat Fruit Grain Meat Sugar Vegetable"),
-      # sprintf("dairy_%d fat_%d fruit_%d grain_%d meat_%d sugar_%d vegetable_%d", 3),
-      # sprintf("dairy_%1$d fat_%1$d fruit_%1$d grain_%1$d meat_%1$d sugar_%1$d vegetable_%1$d", 3),
       p(HTML(item_name_example_str()))
     )
-  })
+  }
   
-  output$an_instr <- renderText({
-    if (input$mode == "Simulate Data") {
-      
-      txt <- "analysis instructions in simulation mode!\ntest newline"
-      return(txt)
-    } else if (input$mode == "Upload Raw Data") {
-      return("analysis instructions in raw data mode!")
-    } else {
-      return("analysis instructions in posterior sample mode!")
-    }
-    
-  })
+  posterior_instr <- function() {
+    wellPanel(
+      h4("Instructions:"),
+      p("Shortcut: select mode 'Simulate Data' and source 'Exemplar Parameters' to download RData file of posterior sample in 'Analysis' tab!"),
+      h5("Posterior Samples"),
+      p("Prepare an RData file"),
+      h5("Optional: Item Name List"),
+      p("If Item Name List is not provided, a default list will be used to name the groups and items."),
+      p("To upload Item Name List, prepare a csv file containing G columns, where G is the number of item groups.
+        The name of the g-th column represents the name of the g-th group. The elements in the g-th column should contain the names of items in group g."),
+      p("Notice that the item names in the g-th column should be in the same order as their corresponding column indices of data matrix are listed in the g-th row in Item Membership List."),
+      p("An example of a csv file:"),
+      p(HTML(item_name_example_str()))
+    )
+  }
 }
