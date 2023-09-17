@@ -59,17 +59,38 @@ ui = fluidPage(
   fluidRow(
     column(12, 
            HTML("<p style='margin-left: 18px; font-size: 15px; color: gray;'>
-                This application complements the underlying package, ddtlcm, 
+                This application complements the underlying package, <a href='https://github.com/limengbinggz/ddtlcm/'>ddtlcm</a>, 
                 by providing a font-end interface for users to explore and visualize the results of the 'DDT-LCM' model implemented in the package.
-                'DDT-LCM' is a tree-regularized Bayesian latent class model designed for deriving dietary pattern, 
-                aiming to enhance the robustness of LCMs in the presence of weak class separation, particularly for small sample sizes.
+                'DDT-LCM' implements a tree-regularized Bayesian latent class analysis, which enhances classical latent class models 
+                <a href='https://arxiv.org/abs/2306.04700'>(Li, Stephenson, Wu (2023) ArXiv)</a>.
+                It address the long-standing issues of numerical and inferential instabilities for latent class models 
+                under weak class separation particularly for small sample sizes. <br>
+                <p><small>Current Version: 0.1.0</small></p>
                 </p>")
+    ),
+  ),
+  
+  
+  fluidRow(
+    column(12, align = "left",
+           checkboxInput("credits_checkbox", "Show References and Maintainer Contacts", TRUE),
+           conditionalPanel("input.credits_checkbox == 1",
+                            uiOutput("credits_instr"),
+           ),
     )
   ),
+  
+  
+                                    
+
+  
+  
   
   sidebarLayout(
     sidebarPanel(
       width = 3,
+      
+      
       div(class = "option-header", "Mode"),
       radioButtons("mode", "Options",
                    choices = c("Simulate Data", 
@@ -87,7 +108,7 @@ ui = fluidPage(
                                             fluidRow(
                                               column(width = 11,
                                                      radioButtons("dataset_name", "Scenario",
-                                                                  choices = c("Mimicking HCHS", "Synthetic Data"),
+                                                                  choices = c("Semi-Synthetic: Mimicking a data subset from Hispanic Community Health Study/Study of Latinos (HCHS/SOL); please Li, Stephenson, Wu (2023) ArXiv)", "Synthetic Data"),
                                                      ),
                                               )
                                               
@@ -198,11 +219,13 @@ ui = fluidPage(
       
       conditionalPanel("input.mode == 'Simulate Data' | input.mode == 'Upload Raw Data'",
                        wellPanel(
-                         div(class = "option-header", "Model Fit"),
+                         div(class = "option-header", "Model Fit Options"),
                          numericInput("K_fit", "Number of Classes, K", value = 6,
                                       min = 1, max = 500, step = 1),
                          numericInput("niter", "Number of Interations",
-                                      value = 10, min = 1, max = 500, step = 1),
+                                      value = 10, min = 1, max = 100000, step = 1),
+                         numericInput("burnin", "Number of Burn-ins",
+                                      value = 4, min = 0, max = 99999, step = 1),
                          numericInput("seed_posterior", 
                                       "Random Seed to Generate Posterior Samples",
                                       value = 999, min = 1, max = 1000, step = 1),
@@ -211,8 +234,6 @@ ui = fluidPage(
       ),
       wellPanel(
         div(class = "option-header", "Output Options"),
-        numericInput("burnin", "Number of Burn-ins",
-                     value = 4, min = 0, max = 500, step = 1),
         radioButtons("plt_opt", "Plot options",
                      choices = c("all", "profile", "tree"),
                      # inline = TRUE
@@ -224,7 +245,13 @@ ui = fluidPage(
     mainPanel(
       tabsetPanel(
         tabPanel("Truth",
-                 h3("True Parameters: Tree & Response Probabilities"),
+                 # h3("True Parameters: Tree & Response Probabilities"),
+
+                 conditionalPanel("input.mode == 'Simulate Data' & input.sim_data_src == 'Exemplar Parameters'",
+                                  fluidRow(h5("The following shows the true tree and item response probabilities for each class; the
+                                             detailed values for a more complete list of simulation truths can be found at the 'Parameters' tab.")
+                                  ),
+                 ),
                  conditionalPanel("input.mode == 'Simulate Data' & input.sim_data_src == 'Upload Parameters'",
                                   checkboxInput("sim_instr_checkbox", "Show instructions", TRUE),
                                   conditionalPanel("input.sim_instr_checkbox == 1",
@@ -252,14 +279,41 @@ ui = fluidPage(
                  #   ),
                  # ),
         ),
-        tabPanel("Analysis",
-                 h3("Analysis Result: Tree & Response Probabilities"),
-                 conditionalPanel("input.mode != 'Simulate Data' | input.sim_data_src != 'Exemplar Parameters'",
-                                  checkboxInput("an_instr_checkbox", "Show instructions", TRUE),
-                                  conditionalPanel("input.an_instr_checkbox == 1",
-                                                   uiOutput("an_instr"),
+        tabPanel("Data",
+                 h3("Output Data"),
+                 # checkboxInput("sim_par_checkbox", "Show Parameter Files", FALSE),
+                 conditionalPanel("input.mode",
+                                  # conditionalPanel("input.mode != 'Upload Posterior Samples'",
+                                  fluidRow(
+                                    div(class = "option-header", "Data Matrix"),
+                                    # h4("Data Matrix"),
+                                    column(width = 9,
+                                           dataTableOutput("response_matrix_csv"),
+                                           style = "overflow-y: scroll;overflow-x: scroll;"
+                                    ),
+                                    column(width = 3,
+                                           downloadButton("download_response_matrix", "Download Data")
+                                    ),
                                   ),
                  ),
+                 # fluidRow(
+                 #   div(class = "option-header", "Posterior Samples"),
+                 #   column(width = 3,
+                 #          downloadButton("download_posterior_datatab", "Download RData"),
+                 #   ),
+                 #   
+                 # ),
+                 
+        ),
+        tabPanel("Analysis",
+                 h3("Analysis Result: Estimated Tree & Response Probabilities"),
+                 h5("You may view only the tree or the response probabilities by selecting the correct 'Plot options' at the bottom of the left panel."),
+                 # conditionalPanel("input.mode != 'Simulate Data' | input.sim_data_src != 'Exemplar Parameters'",
+                 #                  checkboxInput("an_instr_checkbox", "Show instructions", TRUE),
+                 #                  conditionalPanel("input.an_instr_checkbox == 1",
+                 #                                   uiOutput("an_instr"),
+                 #                  ),
+                 # ), ### <---- ZW: delete; no need for instruction of uploading data when displaying analysis result.
                  
                  fluidRow(
                    column(width = 12,
@@ -283,9 +337,10 @@ ui = fluidPage(
                  
         ),
         tabPanel("Parameters",
-                 h3("Input Parameters"),
-                 conditionalPanel("input.mode != 'Upload Posterior Samples'",
+                
+                 conditionalPanel("input.mode != 'Upload Posterior Samples' ",
                                   conditionalPanel("input.mode == 'Simulate Data'",
+                                                   fluidRow(h3("Values of true parameters for display and downloads:")),
                                                    fluidRow(
                                                      # div(style = "height: 50px;"),
                                                      div(class = "option-header", "Tree"),
@@ -302,7 +357,7 @@ ui = fluidPage(
                                                             style = "overflow-y: scroll;overflow-x: scroll;"
                                                      ),
                                                      column(width = 3,
-                                                            downloadButton("download_tree", "Download Data")
+                                                            downloadButton("download_tree", "Download")
                                                      ),
                                                    ),
                                                    fluidRow(
@@ -313,7 +368,7 @@ ui = fluidPage(
                                                             style = "overflow-y: scroll;overflow-x: scroll;"
                                                      ),
                                                      column(width = 3,
-                                                            downloadButton("download_class_probability", "Download Data")
+                                                            downloadButton("download_class_probability", "Download")
                                                      ),
                                                    ),
                                                    fluidRow(
@@ -324,7 +379,7 @@ ui = fluidPage(
                                                             style = "overflow-y: scroll;overflow-x: scroll;"
                                                      ),
                                                      column(width = 3,
-                                                            downloadButton("download_sigma_by_group", "Download Data")
+                                                            downloadButton("download_sigma_by_group", "Download")
                                                      ),
                                                    ),
                                                    div(style = "height: 50px;"),
@@ -337,7 +392,7 @@ ui = fluidPage(
                                            style = "overflow-y: scroll;overflow-x: scroll;"
                                     ),
                                     column(width = 3,
-                                           downloadButton("download_item_membership", "Download Data")
+                                           downloadButton("download_item_membership", "Download")
                                     ),
                                   ),
                  ),
@@ -357,31 +412,6 @@ ui = fluidPage(
                                   ),
                  ),
         ),
-        tabPanel("Data",
-                 h3("Output Data"),
-                 # checkboxInput("sim_par_checkbox", "Show Parameter Files", FALSE),
-                 conditionalPanel("input.mode != 'Upload Posterior Samples'",
-                                  fluidRow(
-                                    div(class = "option-header", "Data Matrix"),
-                                    # h4("Data Matrix"),
-                                    column(width = 9,
-                                           dataTableOutput("response_matrix_csv"),
-                                           style = "overflow-y: scroll;overflow-x: scroll;"
-                                    ),
-                                    column(width = 3,
-                                           downloadButton("download_response_matrix", "Download Data")
-                                    ),
-                                  ),
-                 ),
-                 # fluidRow(
-                 #   div(class = "option-header", "Posterior Samples"),
-                 #   column(width = 3,
-                 #          downloadButton("download_posterior_datatab", "Download RData"),
-                 #   ),
-                 #   
-                 # ),
-                 
-        ),
       ),
     ),
     
@@ -390,14 +420,23 @@ ui = fluidPage(
   fluidRow(
     column(12, align = "center",
            HTML("<p style='font-size: 15px; color: gray;'>
-                DDT-LCM Shiny app<br>
-                Author: Mengbing Li, Bolin Wu, Briana Stephenson, and Zhenke Wu<br>
-                Maintainer: Mengbing Li (mengbing@umich.edu)<br>
-                Package Github Page: <a href='https://github.com/limengbinggz/ddtlcm/'>ddtlcm</a><br>
+                DDT-LCM Shiny. @2023 MIT LICENSE.
                 </p>")
     )
   ),
   
+  # fluidRow(
+  #   column(12, align = "center",
+  #          HTML("<p style='font-size: 15px; color: gray;'>
+  #               DDT-LCM Shiny app<br>
+  #               Author: Bolin Wu, Briana Stephenson, and Zhenke Wu<br>
+  #               Package Maintainer: Mengbing Li (mengbing@umich.edu)<br>
+  #               Shinyapp Maintainers: Bolin Wu (bolinw@umich.edu), Zhenke Wu (zhenkewu@umich.edu)<br>
+  #               Package Github Page: <a href='https://github.com/limengbinggz/ddtlcm/'>ddtlcm</a><br>
+  #               </p>")
+  #   )
+  # ),
+  # 
   # New UI design END
   
 )

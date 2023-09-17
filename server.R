@@ -354,8 +354,8 @@ server = function(input, output, session) {
       }
     }
     # contentType = function() {
-      # paste("image/", input$sim_plot_download_format, sep = "")
-      
+    # paste("image/", input$sim_plot_download_format, sep = "")
+    
     # }
   )
   
@@ -423,7 +423,7 @@ server = function(input, output, session) {
       )
       
       load(posterior_file$datapath, envir = .GlobalEnv)
-      return(result)
+      return(res)
       # data <- switch(ext,
       #                RData = load(input$posterior_sample_file, envir = .GlobalEnv),
       #                validate("ERROR: Invalid file; Please upload a .RData file")
@@ -502,7 +502,7 @@ server = function(input, output, session) {
   
   get_both_plots <- reactive({
     x <- get_summarized_result()
-
+    
     G <- x$setting$G
     # color_palette = c("#E69F00", "#56B4E9", "#009E73",
     #                   "#000000", "#0072B2", "#D55E00",
@@ -917,7 +917,7 @@ server = function(input, output, session) {
     tree_str <- write.tree(get_tree_phylo())
     split_tree <- strsplit(tree_str, ",")
     tree_df <- data.frame(t(unlist(split_tree)))
-
+    
     datatable(tree_df, colnames = rep("", length(tree_df)))
   })
   
@@ -999,8 +999,8 @@ server = function(input, output, session) {
     iml <- data_hchs$item_membership_list
     
     rows_str <- paste(lapply(iml, function(lst) paste("<tr><td>", 
-                                                  paste(lst, collapse = "</td><td>"), 
-                                                  "</td></tr>")), collapse = '')
+                                                      paste(lst, collapse = "</td><td>"), 
+                                                      "</td></tr>")), collapse = '')
     return(paste("<table>", rows_str, "</table>"))
     
   }
@@ -1035,6 +1035,20 @@ server = function(input, output, session) {
     
     return(paste("<table>", headers, content, "</table>"))
   }
+  
+  output$credits_instr <- renderUI({
+    conditionalPanel("input.credits_checkbox == 1",
+                     fluidRow(
+                       column(12, align = "left",
+                              HTML("<p style='font-size: 15px; color: gray;'>
+                1. Li, M., Stephenson, B., & Wu, Z. (2023). Tree-Regularized Bayesian Latent Class Analysis for Improving Weakly Separated Dietary Pattern Subtyping in Small-Sized Subpopulations. arXiv preprint arXiv:2306.04700. <a href='https://arxiv.org/abs/2306.04700'>[link to ArXiv]</a><br>
+                2. Package CRAN page: <a href='https://cran.r-project.org/web/packages/ddtlcm/index.html'>[ddtlcm CRAN]</a>;  Package Github Page: <a href='https://github.com/limengbinggz/ddtlcm/'>[ddtlcm Github]</a>; Package Maintainer: Mengbing Li (mengbing@umich.edu)<br>
+                3. Shinyapp Github Page: <a href='https://github.com/bolinwuuu/ddtlcm_shiny'>[ddtlcm_shiny]</a>; Shinyapp Maintainers: Bolin Wu (main; bolinw@umich.edu), Mengbing Li (mengbing@umich.edu), Zhenke Wu (zhenkewu@umich.edu)
+                </p>")
+                       )
+                     ),
+                     )
+  })
   
   output$sim_instr <- renderUI({
     sim_par_instr("tree_phylo_checkbox_tr",
@@ -1183,5 +1197,5 @@ server = function(input, output, session) {
       ),
     )
   }
-
+  
 }
