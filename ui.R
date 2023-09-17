@@ -55,7 +55,17 @@ ui = fluidPage(
   
   # New UI design BEGIN
   
-  headerPanel("DDT-LCM"),
+  headerPanel("DDT-LCM: Dirichlet Diffusion Tree-Latent Class Model"),
+  fluidRow(
+    column(12, 
+           HTML("<p style='margin-left: 18px; font-size: 15px; color: gray;'>
+                This application complements the underlying package, ddtlcm, 
+                by providing a font-end interface for users to explore and visualize the results of the 'DDT-LCM' model implemented in the package.
+                'DDT-LCM' is a tree-regularized Bayesian latent class model designed for deriving dietary pattern, 
+                aiming to enhance the robustness of LCMs in the presence of weak class separation, particularly for small sample sizes.
+                </p>")
+    )
+  ),
   
   sidebarLayout(
     sidebarPanel(
@@ -375,6 +385,17 @@ ui = fluidPage(
       ),
     ),
     
+  ),
+  
+  fluidRow(
+    column(12, align = "center",
+           HTML("<p style='font-size: 15px; color: gray;'>
+                DDT-LCM Shiny app<br>
+                Author: Mengbing Li, Bolin Wu, Briana Stephenson, and Zhenke Wu<br>
+                Maintainer: Mengbing Li (mengbing@umich.edu)<br>
+                Package Github Page: <a href='https://github.com/limengbinggz/ddtlcm/'>ddtlcm</a><br>
+                </p>")
+    )
   ),
   
   # New UI design END
