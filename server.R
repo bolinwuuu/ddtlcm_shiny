@@ -1051,71 +1051,57 @@ server = function(input, output, session) {
   })
   
   output$sim_instr <- renderUI({
-    sim_par_instr("tree_phylo_checkbox_tr",
-                  "class_prob_checkbox_tr",
-                  "sigma_by_group_checkbox_tr",
-                  "item_memb_checkbox_sim_par_tr",
-                  "item_name_checkbox_sim_par_tr")
+    sim_par_instr()
   })
   
   output$an_instr <- renderUI({
-    if (input$mode == "Simulate Data") {
-      sim_par_instr("tree_phylo_checkbox_an",
-                    "class_prob_checkbox_an",
-                    "sigma_by_group_checkbox_an",
-                    "item_memb_checkbox_sim_par_an",
-                    "item_name_checkbox_sim_par_an")
-    } else if (input$mode == "Upload Raw Data") {
+    if (input$mode == "Upload Raw Data") {
       raw_data_instr()
     } else {
       posterior_instr()
     }
-    
+
   })
   
-  sim_par_instr <- function(tree_phylo_checkbox,
-                            class_prob_checkbox,
-                            sigma_by_group_checkbox,
-                            item_memb_checkbox_sim_par,
-                            item_name_checkbox_sim_par) {
+  sim_par_instr <- function() {
     wellPanel(
       h4("Instructions:"),
       p(HTML("<B>Shortcut:</B> select 'Exemplar Parameters' and switch to 'Parameters' tab to view and download file templates!")),
       p("The following 4 files should be prepared:"),
       h5("Tree phylo"),
-      checkboxInput(tree_phylo_checkbox, "Show details", FALSE),
-      conditionalPanel(paste("input.", tree_phylo_checkbox, " == 1", sep = ""),
+      checkboxInput("tree_phylo_checkbox", "Show details", FALSE),
+      conditionalPanel("input.tree_phylo_checkbox == 1",
                        p("Prepare a csv or txt file containing a MAP tree in Newick format (parenthetic format)."),
                        p("An example of a txt file:"),
                        p("(((v5:0.14,(v4:0.12,v2:0.12)u6:0.016)u5:0.051,(v6:0.19,(v3:0.16,v1:0.16)u2:0.024)u3:0.0051)u4:0.81)u1;"),
       ),
       h5("Class Probability List"),
-      checkboxInput(class_prob_checkbox, "Show details", FALSE),
-      conditionalPanel(paste("input.", class_prob_checkbox, " == 1", sep = ""),
+      checkboxInput("class_prob_checkbox", "Show details", FALSE),
+      conditionalPanel("input.class_prob_checkbox == 1",
                        p("Prepare a csv file containing a single column data with length K, where K is the number of classes. 
                         The k-th entry represents the posterior mean probabilities of a class k. Notice that the sum of values in all entries should be equal to 1."),
                        p("An example of a csv file with header:"),
                        p(HTML(paste("x<br>", paste(round(data_hchs$class_probability, 3), collapse = '<br>')))),
       ),
       h5("Sigma by Group List"),
-      checkboxInput(sigma_by_group_checkbox, "Show details", FALSE),
-      conditionalPanel(paste("input.", sigma_by_group_checkbox, " == 1", sep = ""),
+      checkboxInput("sigma_by_group_checkbox", "Show details", FALSE),
+      conditionalPanel("input.sigma_by_group_checkbox == 1",
                        p("Prepare a csv file containing a single column data with length G, where G is the number of item groups.
                         The g-th entry represents the posterior mean diffusion variances of a group g."),
                        p("An example of a csv file with header:"),
                        p(HTML(paste("x<br>", paste(round(data_hchs$Sigma_by_group, 3), collapse = '<br>')))),
       ),
       h5("Item Membership List"),
-      checkboxInput(item_memb_checkbox_sim_par, "Show details", FALSE),
-      conditionalPanel(paste("input.", item_memb_checkbox_sim_par, " == 1", sep = ""),
+      checkboxInput("item_memb_checkbox_sim_par", "Show details", FALSE),
+      conditionalPanel("input.item_memb_checkbox_sim_par == 1",
                        p("Prepare a csv file containing G rows, where G is the number of item groups.
                         The g-th row should contain the column indices of the observed data matrix corresponding to items in group g."),
                        p("An example of a csv file:"),
                        p(HTML(item_memb_example_str())),
       ),
       h5("Optional: Item Name List"),
-      checkboxInput(item_name_checkbox_sim_par, "Show details", FALSE),
-      conditionalPanel(paste("input.", item_name_checkbox_sim_par, " == 1", sep = ""),
+      checkboxInput("item_name_checkbox_sim_par", "Show details", FALSE),
+      conditionalPanel("input.item_name_checkbox_sim_par == 1",
                        p("If Item Name List is not provided, a default list will be used to name the groups and items."),
                        p("To upload Item Name List, prepare a csv file containing G columns, where G is the number of item groups.
                         The header of the g-th column represents the name of the g-th group. The elements in the g-th column should contain the names of items in group g."),

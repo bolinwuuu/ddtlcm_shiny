@@ -308,12 +308,12 @@ ui = fluidPage(
         tabPanel("Analysis",
                  h3("Analysis Result: Estimated Tree & Response Probabilities"),
                  h5("You may view only the tree or the response probabilities by selecting the correct 'Plot options' at the bottom of the left panel."),
-                 # conditionalPanel("input.mode != 'Simulate Data' | input.sim_data_src != 'Exemplar Parameters'",
-                 #                  checkboxInput("an_instr_checkbox", "Show instructions", TRUE),
-                 #                  conditionalPanel("input.an_instr_checkbox == 1",
-                 #                                   uiOutput("an_instr"),
-                 #                  ),
-                 # ), ### <---- ZW: delete; no need for instruction of uploading data when displaying analysis result.
+                 conditionalPanel("input.mode != 'Simulate Data'",
+                                  checkboxInput("an_instr_checkbox", "Show instructions", TRUE),
+                                  conditionalPanel("input.an_instr_checkbox == 1",
+                                                   uiOutput("an_instr"),
+                                  ),
+                 ), 
                  
                  fluidRow(
                    column(width = 12,
