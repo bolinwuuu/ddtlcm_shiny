@@ -1083,11 +1083,11 @@ server = function(input, output, session) {
                        p("An example of a csv file with header:"),
                        p(HTML(paste("x<br>", paste(round(data_hchs$class_probability, 3), collapse = '<br>')))),
       ),
-      h5("Sigma by Group List"),
+      h5("Sigma Squared by Group List"),
       checkboxInput("sigma_by_group_checkbox", "Show details", FALSE),
       conditionalPanel("input.sigma_by_group_checkbox == 1",
                        p("Prepare a csv file containing a single column data with length G, where G is the number of item groups.
-                        The g-th entry represents the posterior mean diffusion variances of a group g."),
+                        The g-th entry represents the posterior mean diffusion variances of group g."),
                        p("An example of a csv file with header:"),
                        p(HTML(paste("x<br>", paste(round(data_hchs$Sigma_by_group, 3), collapse = '<br>')))),
       ),

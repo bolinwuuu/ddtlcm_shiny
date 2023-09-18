@@ -138,7 +138,7 @@ ui = fluidPage(
                                           ),
                                           fluidRow(
                                             column(width = 8,
-                                                   fileInput("sigma_by_group_file", "Upload sigma by group list")
+                                                   fileInput("sigma_by_group_file", "Upload sigma squared by group list")
                                             ),
                                             column(width = 1,
                                                    div(style = "width: 100%; height: 20px;"),
