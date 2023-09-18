@@ -108,7 +108,7 @@ ui = fluidPage(
                                             fluidRow(
                                               column(width = 11,
                                                      radioButtons("dataset_name", "Scenario",
-                                                                  choices = c("Semi-Synthetic: Mimicking a data subset from Hispanic Community Health Study/Study of Latinos (HCHS/SOL); please Li, Stephenson, Wu (2023) ArXiv)", "Synthetic Data"),
+                                                                  choices = c("Semi-Synthetic Data (mimicking a real data set; see Li, Stephenson, Wu (2023) Arxiv)", "Synthetic Data"),
                                                      ),
                                               )
                                               
