@@ -422,8 +422,8 @@ server = function(input, output, session) {
              "ERROR: Invalid file; Please upload a .RData file")
       )
       
-      load(posterior_file$datapath, envir = .GlobalEnv)
-      return(res)
+      res_name <- load(posterior_file$datapath, envir = .GlobalEnv)
+      return(get(res_name))
       # data <- switch(ext,
       #                RData = load(input$posterior_sample_file, envir = .GlobalEnv),
       #                validate("ERROR: Invalid file; Please upload a .RData file")
