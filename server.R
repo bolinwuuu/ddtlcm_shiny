@@ -85,10 +85,10 @@ server = function(input, output, session) {
   }
   
   get_response_matrix <- reactive({
-    validate(
-      need(input$mode == "Simulate Data" | input$mode == "Upload Raw Data", 
-           "ERROR: response_matrix() is NOT called in Simulate Data or Upload Raw Data modes")
-    )
+    # validate(
+    #   need(input$mode == "Simulate Data" | input$mode == "Upload Raw Data", 
+    #        "ERROR: response_matrix() is NOT called in Simulate Data or Upload Raw Data modes")
+    # )
     if (input$mode == "Simulate Data") {
       
       sim_data_res <- get_sim_data()
@@ -97,7 +97,7 @@ server = function(input, output, session) {
       return(sim_data_res$response_matrix)
       
       # return(response_matrix)
-    } else {
+    } else if (input$mode == "Upload Raw Data") {
       input$read_button
       
       data_file <- isolate(input$data_matrix_file)
@@ -107,6 +107,8 @@ server = function(input, output, session) {
                                           data_header,
                                           "response matrix")
       return(as.matrix(uploaded_data) + 0.0)
+    } else {
+      return(get_result()$data)
     }
   })
   
