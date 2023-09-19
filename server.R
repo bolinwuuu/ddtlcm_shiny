@@ -21,8 +21,8 @@ library(ggbrace)
 options(warn = -1)
 
 server = function(input, output, session) {
-  data(data_hchs)
-  list2env(setNames(data_hchs, names(data_hchs)), envir = globalenv())
+  data(parameter_diet)
+  list2env(setNames(parameter_diet, names(parameter_diet)), envir = globalenv())
   data(data_synthetic)
   list2env(setNames(data_synthetic, names(data_synthetic)), envir = globalenv())
   
@@ -119,7 +119,7 @@ server = function(input, output, session) {
       if (input$dataset_name == "Synthetic Data") {
         return(data_synthetic$tree_phylo)
       } else {
-        return(data_hchs$tree_phylo)
+        return(parameter_diet$tree_phylo)
       }
       
     } else {
@@ -150,7 +150,7 @@ server = function(input, output, session) {
       if (input$dataset_name == "Synthetic Data") {
         return(data_synthetic$class_probability)
       } else {
-        return(data_hchs$class_probability)
+        return(parameter_diet$class_probability)
       }
     } else {
       input$read_button
@@ -172,7 +172,7 @@ server = function(input, output, session) {
       if (input$dataset_name == "Synthetic Data") {
         return(data_synthetic$Sigma_by_group)
       } else {
-        return(data_hchs$Sigma_by_group)
+        return(parameter_diet$Sigma_by_group)
       }
     } else {
       input$read_button
@@ -195,7 +195,7 @@ server = function(input, output, session) {
       if (input$dataset_name == "Synthetic Data") {
         return(data_synthetic$item_membership_list)
       } else {
-        return(data_hchs$item_membership_list)
+        return(parameter_diet$item_membership_list)
       }
     } else {
       input$read_button
@@ -237,7 +237,7 @@ server = function(input, output, session) {
       if (input$dataset_name == "Synthetic Data") {
         return(data_synthetic$item_name_list)
       } else {
-        return(data_hchs$item_name_list)
+        return(parameter_diet$item_name_list)
       }
       
     } else {
@@ -996,7 +996,7 @@ server = function(input, output, session) {
   # )
   
   item_memb_example_str <- function() {
-    iml <- data_hchs$item_membership_list
+    iml <- parameter_diet$item_membership_list
     
     rows_str <- paste(lapply(iml, function(lst) paste("<tr><td>", 
                                                       paste(lst, collapse = "</td><td>"), 
@@ -1006,7 +1006,7 @@ server = function(input, output, session) {
   }
   
   item_name_example_str <- function() {
-    inl <- data_hchs$item_name_list
+    inl <- parameter_diet$item_name_list
     
     max_length <- max(sapply(inl, length))
     
@@ -1081,7 +1081,7 @@ server = function(input, output, session) {
                        p("Prepare a csv file containing a single column data with length K, where K is the number of classes. 
                         The k-th entry represents the posterior mean probabilities of a class k. Notice that the sum of values in all entries should be equal to 1."),
                        p("An example of a csv file with header:"),
-                       p(HTML(paste("x<br>", paste(round(data_hchs$class_probability, 3), collapse = '<br>')))),
+                       p(HTML(paste("x<br>", paste(round(parameter_diet$class_probability, 3), collapse = '<br>')))),
       ),
       h5("Sigma Squared by Group List"),
       checkboxInput("sigma_by_group_checkbox", "Show details", FALSE),
@@ -1089,7 +1089,7 @@ server = function(input, output, session) {
                        p("Prepare a csv file containing a single column data with length G, where G is the number of item groups.
                         The g-th entry represents the posterior mean diffusion variances of group g."),
                        p("An example of a csv file with header:"),
-                       p(HTML(paste("x<br>", paste(round(data_hchs$Sigma_by_group, 3), collapse = '<br>')))),
+                       p(HTML(paste("x<br>", paste(round(parameter_diet$Sigma_by_group, 3), collapse = '<br>')))),
       ),
       h5("Item Membership List"),
       checkboxInput("item_memb_checkbox_sim_par", "Show details", FALSE),
