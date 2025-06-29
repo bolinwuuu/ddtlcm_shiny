@@ -834,15 +834,49 @@ server = function(input, output, session) {
     dat_brace <- data.table(x = dat_brace)
     dat_brace[, y := rep(c(0.4, 0), G)]
     dat_brace[, group_label := rep(1:G, each = 2)]
-    plot_prob + geom_brace(aes(dat_brace$x, dat_brace$y, label = group_label), inherit.data=F)
+    # plot_prob + geom_brace(aes(dat_brace$x, dat_brace$y, label = group_label), inherit.data=F)
+    # for (g in 1:G) {
+    #   suppressWarnings({
+    #     plot_prob <- plot_prob +
+    #       geom_brace(aes_(x=c(item_membership_list[[g]][1], item_membership_list[[g]][length(item_membership_list[[g]])]),
+    #                       y=c(0.4, 0), label = g),
+    #                  inherit.data=F, rotate=180, labelsize=3.5)
+    #   })
+    # }
+    plot_prob +
+      stat_brace(
+        data = dat_brace,
+        aes(x = x, y = y, group = group_label),
+        inherit.data = FALSE, outside = FALSE
+      ) +
+      stat_bracetext(
+        data = dat_brace,
+        aes(x = x, y = y, label = group_label),
+        inherit.data = FALSE, outside = FALSE
+      )
+
     for (g in 1:G) {
+      rng <- item_membership_list[[g]]
+      data_g <- data.frame(
+        x = c(rng[1], rng[length(rng)]),
+        y = c(0.4, 0),
+        label = g
+      )
       suppressWarnings({
         plot_prob <- plot_prob +
-          geom_brace(aes_(x=c(item_membership_list[[g]][1], item_membership_list[[g]][length(item_membership_list[[g]])]),
-                          y=c(0.4, 0), label = g), 
-                     inherit.data=F, rotate=180, labelsize=3.5)
+          stat_brace(
+            data = data_g,
+            aes(x = x, y = y),
+            inherit.data = FALSE, outside = FALSE, rotate = 180
+          ) +
+          stat_bracetext(
+            data = data_g,
+            aes(x = x, y = y, label = label),
+            inherit.data = FALSE, outside = FALSE, rotate = 180
+          )
       })
     }
+    
     ggarrange(t1, plot_prob, widths = c(0.2, 0.3), ncol = 2, common.legend = T)
   }
   
