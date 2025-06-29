@@ -1043,7 +1043,7 @@ server = function(input, output, session) {
                      fluidRow(
                        column(12, align = "left",
                               HTML("<p style='font-size: 15px; color: gray;'>
-                1. Li, M., Stephenson, B., & Wu, Z. (2023). Tree-Regularized Bayesian Latent Class Analysis for Improving Weakly Separated Dietary Pattern Subtyping in Small-Sized Subpopulations. arXiv preprint arXiv:2306.04700. <a href='https://arxiv.org/abs/2306.04700'>[link to ArXiv]</a><br>
+                1. Li, M., Stephenson, B., & Wu, Z. (2025). Tree-Regularized Bayesian Latent Class Analysis for Improving Weakly Separated Dietary Pattern Subtyping in Small-Sized Subpopulations. Annals of Applied Statistics. arXiv:2306.04700. <a href='https://arxiv.org/abs/2306.04700'>[link to ArXiv]</a><br>
                 2. Package CRAN page: <a href='https://cran.r-project.org/web/packages/ddtlcm/index.html'>[ddtlcm CRAN]</a>;  Package Github Page: <a href='https://github.com/limengbinggz/ddtlcm/'>[ddtlcm Github]</a>; Package Maintainer: Mengbing Li (mengbing@umich.edu)<br>
                 3. Shinyapp Github Page: <a href='https://github.com/bolinwuuu/ddtlcm_shiny'>[ddtlcm_shiny]</a>; Shinyapp Maintainers: Bolin Wu (main; bolinw@umich.edu), Mengbing Li (mengbing@umich.edu), Zhenke Wu (zhenkewu@umich.edu)
                 </p>")

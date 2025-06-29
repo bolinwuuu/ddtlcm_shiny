@@ -62,7 +62,7 @@ ui = fluidPage(
                 This application complements the underlying package, <a href='https://github.com/limengbinggz/ddtlcm/'>ddtlcm</a>, 
                 by providing a font-end interface for users to explore and visualize the results of the 'DDT-LCM' model implemented in the package.
                 'DDT-LCM' implements a tree-regularized Bayesian latent class analysis, which enhances classical latent class models 
-                <a href='https://arxiv.org/abs/2306.04700'>(Li, Stephenson, Wu (2023) ArXiv)</a>.
+                <a href='https://arxiv.org/abs/2306.04700'>(Li, Stephenson, Wu (2025) Annals of Applied Statistics. In press.)</a>.
                 It address the long-standing issues of numerical and inferential instabilities for latent class models 
                 under weak class separation particularly for small sample sizes. <br>
                 <p><small>Current Version: 0.1.0</small></p>
@@ -108,7 +108,7 @@ ui = fluidPage(
                                             fluidRow(
                                               column(width = 11,
                                                      radioButtons("dataset_name", "Scenario",
-                                                                  choices = c("Semi-Synthetic Data (mimicking a real data set; see Li, Stephenson, Wu (2023) Arxiv)", "Synthetic Data"),
+                                                                  choices = c("Semi-Synthetic Data (mimicking a real data set; see Li, Stephenson, Wu (2025) Annals of Applied Statistics.)", "Synthetic Data"),
                                                      ),
                                               )
                                               
